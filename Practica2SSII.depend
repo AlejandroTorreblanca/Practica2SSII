@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1511205798 source:c:\users\alexjandro\desktop\practica2ssii\p.cpp
+	<stdlib.h>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<string.h>
+
