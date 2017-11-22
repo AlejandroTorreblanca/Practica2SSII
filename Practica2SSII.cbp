@@ -11,6 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="Config-F.txt BC-F.txt BH-F1.txt" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -31,6 +32,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="p.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -6,3 +6,13 @@
 	<algorithm>
 	<string.h>
 
+1511355036 source:c:\users\alexjandro\documents\github\practica2ssii\p.cpp
+	<stdlib.h>
+	<iostream>
+	<fstream>
+	<queue>
+	<algorithm>
+	<string.h>
+	<string>
+	<sstream>
+
