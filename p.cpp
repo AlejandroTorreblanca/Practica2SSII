@@ -10,29 +10,25 @@
 #define MAX_PRIO 100
 #define MAX_BH 20
 using namespace std;
-
 typedef pair<string,string> par;
-
 struct Terna {
    string a;
    string op;
    string b;
 };
 
-
 //////////////////////////////////////////////////////////////
 ////////////        VARIABLES GLOBALES        ////////////////
 //////////////////////////////////////////////////////////////
 
-
-
-string tipoNUMAtributo[MAX_ATRIBUTOS];
+string tipoNumAtributo[MAX_ATRIBUTOS];
 par baseHechos[MAX_BH];
+int nCondiciones[MAX_PRIO];
 Terna listaCondiciones[MAX_PRIO][MAX_BH];
 par listaConsecuencias[MAX_PRIO];
 int prioridades[MAX_PRIO];
 string objetivo;
-int nRestric, nHechos;
+int nRestric, nHechos, nAtributos;
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -118,6 +114,7 @@ void leerBC(char* nombre )
 
         int n=funcionSeparadora(condicion,parametros,'y');
         int j=0;
+        nCondiciones[i]=n;
         while(j<n)
         {
             //cout << "terna " << j  <<parametros[j]<< endl;
@@ -135,7 +132,7 @@ void leerBC(char* nombre )
         p.first=parametros[0];
         p.second=parametros[2];
         listaConsecuencias[i]=p;
-        cout << "   * " << p.first <<" "<< p.second<< endl;
+        cout << "   *  " << p.first <<" "<< p.second<< endl;
     }
 }
 
@@ -143,7 +140,7 @@ void leerfC(char* nombre )
 {
     char cadena[128];
     string parametros [3];
-    int nAtributos, nPrio; int k=0;
+    int nPrio; int k=0;
     string str;
 
     ifstream fBC(nombre);
@@ -163,7 +160,7 @@ void leerfC(char* nombre )
         if(parametros[1].compare("NU")==0)
         {
             //cout <<"4 "<< parametros[0]  << endl;
-            tipoNUMAtributo[k]=parametros[0];
+            tipoNumAtributo[k]=parametros[0];
             k++;
         }
         //cout <<"3 "<< str  << endl;
@@ -184,6 +181,81 @@ void leerfC(char* nombre )
         prioridades[i]=aux;
         cout << aux <<" ";
     }
+}
+
+/**
+Retorna 0 si no se encuentra el string introducido,
+si la encuentra retorna el numero de veces que esta en la baseHechos[].
+**/
+int buscarBaseHechos(int parametros[10], string busqueda)
+{
+    for (int i=0; i<nHechos; i++)
+    {
+        if(baseHechos[i].first==busqueda)
+            return i;
+        return 0;
+    }
+}
+
+bool comprobarOperacion(Terna t, par p)
+{
+    for(int i=0; i<nAtributos; i++)
+    {
+        if(t.a==tipoNumAtributo[i])
+        {
+            if(t.op=="=")
+            {
+                if(atoi(t.b.c_str())==atoi(p.second.c_str()))
+                    return true;
+            }
+            else if(t.op==">=")
+            {
+                if(atoi(t.b.c_str())>=atoi(p.second.c_str()))
+                    return true;
+            }
+            else if(t.op=="<=")
+            {
+                if(atoi(t.b.c_str())<=atoi(p.second.c_str()))
+                    return true;
+            }
+            else if(t.op=="<")
+            {
+                if(atoi(t.b.c_str())<atoi(p.second.c_str()))
+                    return true;
+            }
+            else if(t.op==">")
+            {
+                if(atoi(t.b.c_str())>atoi(p.second.c_str()))
+                    return true;
+            }
+        }
+    }
+    if(t.b==p.second)
+        return true;
+
+    return false;
+}
+
+void incluirConflictos()
+{
+    for(int i=0; i<nRestric; i++)
+    {
+        int suma=0;
+        for(int j=0; j<nCondiciones[i]; j++)
+        {
+            int parametros [10];
+            int m=buscarBaseHechos(parametros,listaCondiciones[i][j].a);
+            for(int k=0; k<m; k++)
+            {
+                if(comprobarOperacion(listaCondiciones[i][j],baseHechos[parametros[k]]));
+                    suma++;
+            }
+        }
+    }
+}
+void encadenamientoHaciaDelante()
+{
+
 }
 
 //////////////////////////////////////////////////////////////
