@@ -1,5 +1,6 @@
-4 
+5
 Diametro = 3
 Forma = Redonda
 NSemillas = 1
-Color = Rojo
+Color = Morado
+ClaseFrutal = Arbol

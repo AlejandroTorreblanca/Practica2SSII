@@ -10,7 +10,10 @@
 #define MAX_PRIO 100
 #define MAX_BH 20
 using namespace std;
-typedef pair<string,string> par;
+typedef pair<string,string> parS;
+typedef pair<int,int> parI;
+priority_queue<parI, deque<parI>, less<parI> > colaConflictos;
+
 struct Terna {
    string a;
    string op;
@@ -21,14 +24,15 @@ struct Terna {
 ////////////        VARIABLES GLOBALES        ////////////////
 //////////////////////////////////////////////////////////////
 
-string tipoNumAtributo[MAX_ATRIBUTOS];
-par baseHechos[MAX_BH];
+string AtributosTipoNU[MAX_ATRIBUTOS];
+parS baseHechos[MAX_BH];
 int nCondiciones[MAX_PRIO];
+int reglasMarcadas[MAX_PRIO];
 Terna listaCondiciones[MAX_PRIO][MAX_BH];
-par listaConsecuencias[MAX_PRIO];
+parS listaConsecuencias[MAX_PRIO];
 int prioridades[MAX_PRIO];
 string objetivo;
-int nRestric, nHechos, nAtributos;
+int nRestric, nHechos, nAtributos, nAtributosTipoNU;
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -74,13 +78,13 @@ void leerBH(char* nombre )
 
     ifstream fBH(nombre);
     fBH.getline(cadena, 128);
-    int nHechos=atoi(cadena);
+    nHechos=atoi(cadena);
     for(int i=0; i<nHechos;i++)
     {
         fBH.getline(cadena, 128);
         str=cadena;
         funcionSeparadora(str,parametros,' ');
-        par aux;
+        parS aux;
         aux.first=parametros[0];
         aux.second=parametros[2];
         baseHechos[i]=aux;
@@ -110,7 +114,7 @@ void leerBC(char* nombre )
         size_t pos2 = str.find("Entonces");
         condicion = str.substr (pos1+3,pos2-8);
         consecuncia = str.substr (pos2+9);
-        cout << "++++" <<condicion<< "  --  "<<consecuncia << endl;
+        //cout << "++++" <<condicion<< "  --  "<<consecuncia << endl;
 
         int n=funcionSeparadora(condicion,parametros,'y');
         int j=0;
@@ -123,16 +127,16 @@ void leerBC(char* nombre )
             t.a=aux[0];
             t.op=aux[1];
             t.b=aux[2];
-            cout << "   - " << t.a <<" "<< t.op<<" "<< t.b<< endl;
+            //cout << "- " << t.a <<" "<< t.op<<" "<< t.b<< endl;
             listaCondiciones[i][j]=t;
             j++;
         }
         funcionSeparadora(consecuncia,parametros,' ');
-        par p;
+        parS p;
         p.first=parametros[0];
         p.second=parametros[2];
         listaConsecuencias[i]=p;
-        cout << "   *  " << p.first <<" "<< p.second<< endl;
+        //cout << "   *  " << p.first <<" "<< p.second<< endl;
     }
 }
 
@@ -160,11 +164,12 @@ void leerfC(char* nombre )
         if(parametros[1].compare("NU")==0)
         {
             //cout <<"4 "<< parametros[0]  << endl;
-            tipoNumAtributo[k]=parametros[0];
+            AtributosTipoNU[k]=parametros[0];
             k++;
         }
         //cout <<"3 "<< str  << endl;
     }
+    nAtributosTipoNU=k;
     //Leemos objetivo
     fBC.getline(cadena, 128);
     fBC.getline(cadena, 128);
@@ -179,60 +184,82 @@ void leerfC(char* nombre )
         fBC.getline(cadena, 128);
         int aux=atoi(cadena);
         prioridades[i]=aux;
-        cout << aux <<" ";
+        //cout << aux <<" ";
     }
 }
 
 /**
 Retorna 0 si no se encuentra el string introducido,
-si la encuentra retorna el numero de veces que esta en la baseHechos[].
+si lo encuentra retorna el numero de veces que esta en la baseHechos[].
 **/
-int buscarBaseHechos(int parametros[10], string busqueda)
+int buscarBaseHechos(string parametros[10], string busqueda)
 {
+    int suma=0;
+    //cout << "Buscamos en la base la palabra: "<< busqueda<<endl;
     for (int i=0; i<nHechos; i++)
     {
-        if(baseHechos[i].first==busqueda)
-            return i;
-        return 0;
+        parS p=baseHechos[i];
+        //cout << "comparamos: "<< busqueda<<" y "<<p.first<<endl;
+        if(busqueda==p.first)
+        {
+            parametros[suma]=p.second;
+            suma++;
+        }
     }
+     //cout << "Numero de veces encontrada: "<< suma<<endl;
+    return suma;
 }
 
-bool comprobarOperacion(Terna t, par p)
+bool comprobarTipoNum(string str)
 {
-    for(int i=0; i<nAtributos; i++)
+    for(int i=0; i<nAtributosTipoNU; i++)
     {
-        if(t.a==tipoNumAtributo[i])
+        if(str.compare(AtributosTipoNU[i])==0)
+            return true;
+    }
+    return false;
+}
+
+bool comprobarCondicion(Terna t)
+{
+    string parametros[10];
+    int n=buscarBaseHechos(parametros,t.a);
+    for(int i=0; i<n; i++)
+    {
+        if(comprobarTipoNum(t.a))
         {
             if(t.op=="=")
             {
-                if(atoi(t.b.c_str())==atoi(p.second.c_str()))
+                if(atoi(t.b.c_str())==atoi(parametros[i].c_str()))
                     return true;
             }
             else if(t.op==">=")
             {
-                if(atoi(t.b.c_str())>=atoi(p.second.c_str()))
+                if(atoi(parametros[i].c_str())>=atoi(t.b.c_str()))
                     return true;
             }
             else if(t.op=="<=")
             {
-                if(atoi(t.b.c_str())<=atoi(p.second.c_str()))
+                if(atoi(parametros[i].c_str())<=atoi(t.b.c_str()))
                     return true;
             }
             else if(t.op=="<")
             {
-                if(atoi(t.b.c_str())<atoi(p.second.c_str()))
+                if(atoi(parametros[i].c_str())<atoi(t.b.c_str()))
                     return true;
             }
             else if(t.op==">")
             {
-                if(atoi(t.b.c_str())>atoi(p.second.c_str()))
+                if(atoi(parametros[i].c_str())>atoi(t.b.c_str()))
                     return true;
             }
         }
+        else
+        {
+            if(t.b==parametros[i])
+                return true;
+        }
     }
-    if(t.b==p.second)
-        return true;
-
     return false;
 }
 
@@ -240,22 +267,126 @@ void incluirConflictos()
 {
     for(int i=0; i<nRestric; i++)
     {
-        int suma=0;
-        for(int j=0; j<nCondiciones[i]; j++)
+        if(reglasMarcadas[i]==0)
         {
-            int parametros [10];
-            int m=buscarBaseHechos(parametros,listaCondiciones[i][j].a);
-            for(int k=0; k<m; k++)
+            int suma=0;
+            bool parada=true;
+            cout<<"*** intentamos incluir conflicto " << i+1<<endl;
+            while(suma<nCondiciones[i] && parada )
             {
-                if(comprobarOperacion(listaCondiciones[i][j],baseHechos[parametros[k]]));
+
+                if(comprobarCondicion(listaCondiciones[i][suma]))
+                {
+                    Terna t=listaCondiciones[i][suma];
+                    cout << "condicion "<< t.a<< t.op <<t.b<< " correcta"<<endl;
                     suma++;
+                }
+                else
+                {
+                    Terna t=listaCondiciones[i][suma];
+                    cout << "condicion "<< t.a<< t.op <<t.b<< " incorrecta"<<endl;
+                    parada=false;
+                }
+            }
+            if(suma==nCondiciones[i])
+            {
+                cout << "Incluimos el conflicto: "<< i+1<<endl;
+                reglasMarcadas[i]=1;
+                parI par;
+                par.first=prioridades[i];
+                par.second=i;
+                colaConflictos.push(par);
+
+            }
+        }
+
+    }
+}
+
+bool objetivoAlcanzado()
+{
+    string parametros[10];
+    int n=buscarBaseHechos(parametros,objetivo);
+    if(n!=0)
+        return true;
+    return false;
+}
+
+int resolver()
+{
+    queue<parI> colaAux;
+    parI p=colaConflictos.top();
+    colaConflictos.pop();
+    if(!colaConflictos.empty())
+    {
+        parI aux=colaConflictos.top();
+        if(p.first==aux.first)
+        {
+            colaConflictos.pop();
+            if(!colaConflictos.empty())
+            {
+                while(p.first==aux.first && !colaConflictos.empty())
+                {
+                    if(aux.second<p.second)
+                    {
+                        colaAux.push(p);
+                        p=aux;
+                    }
+                    else
+                    {
+                        colaAux.push(aux);
+                    }
+                    aux=colaConflictos.top();
+                    colaConflictos.pop();
+                }
+                if(aux.second<p.second)
+                {
+                    colaAux.push(p);
+                    p=aux;
+                }
+                while(!colaAux.empty())
+                {
+                    p=colaAux.front();
+                    colaConflictos.push(p);
+                    colaAux.pop();
+                }
+            }
+            else
+            {
+                if(aux.second<p.second)
+                {
+                    colaConflictos.push(p);
+                    p=aux;
+                }
             }
         }
     }
+    return p.second;
 }
-void encadenamientoHaciaDelante()
-{
 
+bool encadenamientoHaciaDelante()
+{
+    incluirConflictos();
+    while(!colaConflictos.empty() && !objetivoAlcanzado())
+    {
+
+        int r=resolver();
+        cout << "Se aplica la regla: " << r+1 <<endl;
+        parS hecho=listaConsecuencias[r];
+        baseHechos[nHechos]=hecho;
+        cout << "El resultado del hecho es que: " << hecho.first<<"="<<hecho.second <<endl;
+        nHechos++;
+        incluirConflictos();
+
+
+    }
+    cout<<"*"<<endl;
+    if(objetivoAlcanzado())
+    {
+        return true;
+    }
+
+    return false;
 }
 
 //////////////////////////////////////////////////////////////
@@ -276,14 +407,15 @@ int main(int argc, char **argv)
     leerBC(argv[2]);
     leerBH(argv[3]);
 
+    memset(reglasMarcadas, 0, sizeof(reglasMarcadas));
 
-
-
-
-
-
-
-
-
-
+    if (encadenamientoHaciaDelante())
+    {
+        string parametros[10];
+        cout << "El valor objetivo se ha encontrado." << endl;
+        buscarBaseHechos(parametros,objetivo);
+        cout << "Solucion: " << parametros[0] << endl;
+    }
+    else
+         cout << "Sin solucion." << endl;
 }
