@@ -9,6 +9,7 @@
 #define MAX_ATRIBUTOS 20
 #define MAX_PRIO 100
 #define MAX_BH 20
+
 using namespace std;
 typedef pair<string,string> parS;
 typedef pair<int,int> parI;
@@ -33,6 +34,8 @@ parS listaConsecuencias[MAX_PRIO];
 int prioridades[MAX_PRIO];
 string objetivo;
 int nRestric, nHechos, nAtributos, nAtributosTipoNU;
+ofstream salida1;
+ofstream salida2;
 
 //////////////////////////////////////////////////////////////
 ////////////     FUNCIONES DEL PROGRAMA       ////////////////
@@ -79,10 +82,12 @@ void leerBH(char* nombre )
     ifstream fBH(nombre);
     fBH.getline(cadena, 128);
     nHechos=atoi(cadena);
+    salida1 <<"Base de hechos inicial:"<< endl;
     for(int i=0; i<nHechos;i++)
     {
         fBH.getline(cadena, 128);
         str=cadena;
+        salida1 <<"    -"<<str<< endl;
         funcionSeparadora(str,parametros,' ');
         parS aux;
         aux.first=parametros[0];
@@ -103,6 +108,9 @@ void leerBC(char* nombre )
 
     ifstream fC(nombre);
     fC.getline(cadena, 128);
+    string dominioAplicacion=cadena;
+    salida1 << dominioAplicacion << endl;
+    salida2 << dominioAplicacion << endl;
     fC.getline(cadena, 128);
     nRestric=atoi(cadena);
     for(int i=0; i<nRestric;i++)
@@ -174,6 +182,7 @@ void leerfC(char* nombre )
     fBC.getline(cadena, 128);
     fBC.getline(cadena, 128);
     objetivo=cadena;
+    salida1<< "Atributo objetivo: " << objetivo <<endl;
     //cout <<"objetivo: "<< objetivo  << endl;
     //Leemos prioridades
     fBC.getline(cadena, 128);
@@ -271,26 +280,26 @@ void incluirConflictos()
         {
             int suma=0;
             bool parada=true;
-            cout<<"*** intentamos incluir conflicto " << i+1<<endl;
+            //cout<<"*** intentamos incluir conflicto " << i+1<<endl;
             while(suma<nCondiciones[i] && parada )
             {
 
                 if(comprobarCondicion(listaCondiciones[i][suma]))
                 {
                     Terna t=listaCondiciones[i][suma];
-                    cout << "condicion "<< t.a<< t.op <<t.b<< " correcta"<<endl;
+                   // cout << "condicion "<< t.a<< t.op <<t.b<< " correcta"<<endl;
                     suma++;
                 }
                 else
                 {
                     Terna t=listaCondiciones[i][suma];
-                    cout << "condicion "<< t.a<< t.op <<t.b<< " incorrecta"<<endl;
+                   // cout << "condicion "<< t.a<< t.op <<t.b<< " incorrecta"<<endl;
                     parada=false;
                 }
             }
             if(suma==nCondiciones[i])
             {
-                cout << "Incluimos el conflicto: "<< i+1<<endl;
+              //  cout << "Incluimos el conflicto: "<< i+1<<endl;
                 reglasMarcadas[i]=1;
                 parI par;
                 par.first=prioridades[i];
@@ -366,21 +375,22 @@ int resolver()
 
 bool encadenamientoHaciaDelante()
 {
+    salida1<<" "<<endl;
+    salida1<< "El razonamiento seguido al intentar obtener una solucion es el siguiente:"<<endl;
     incluirConflictos();
-    while(!colaConflictos.empty() && !objetivoAlcanzado())
+    while(!colaConflictos.empty())
     {
 
         int r=resolver();
-        cout << "Se aplica la regla: " << r+1 <<endl;
+        salida1<< "    Se aplica la regla: R" << r+1 <<endl;
         parS hecho=listaConsecuencias[r];
         baseHechos[nHechos]=hecho;
-        cout << "El resultado del hecho es que: " << hecho.first<<"="<<hecho.second <<endl;
+        salida1 << "    Se añade el hecho: " << hecho.first<<"="<<hecho.second <<endl;
         nHechos++;
         incluirConflictos();
 
 
     }
-    cout<<"*"<<endl;
     if(objetivoAlcanzado())
     {
         return true;
@@ -399,23 +409,52 @@ int main(int argc, char **argv)
      if (argc != 4) {
         cout << "- error: "  << endl;
         cout << "Argumentos incorrectos" << endl;
-        cout << "Forma de uso: ficheroConfiguracion ficheroBC ficheroBH" << endl;
+        cout << "Forma de uso: ficheroBC ficheroConfiguracion  ficheroBH" << endl;
         return -1;
     }
 
-    leerfC(argv[1]);
-    leerBC(argv[2]);
+    salida1.open("Salida1.txt",ios::trunc);
+    salida2.open("Salida2.txt",ios::trunc);
+
+    leerBC(argv[1]);
+    leerfC(argv[2]);
     leerBH(argv[3]);
+
+
+
+
+
 
     memset(reglasMarcadas, 0, sizeof(reglasMarcadas));
 
     if (encadenamientoHaciaDelante())
     {
         string parametros[10];
-        cout << "El valor objetivo se ha encontrado." << endl;
-        buscarBaseHechos(parametros,objetivo);
-        cout << "Solucion: " << parametros[0] << endl;
+        salida2 << "Objetivo: " << objetivo << endl;
+        int n=buscarBaseHechos(parametros,objetivo);
+        if (n>1)
+        {
+            salida2<< "Solucion multiple: ";
+            cout<< "Solucion multiple: ";
+            for(int i=0; i<n-1; i++)
+            {
+                salida2 << parametros[i] <<", ";
+                cout << parametros[i] <<", ";
+            }
+            salida2 << parametros[n-1] <<endl;
+            cout << parametros[n-1] <<endl;
+        }
+        else{
+            salida2<< "Solucion: " << parametros[0] << endl;
+            cout<< "Solucion: " << parametros[0] << endl;
+        }
+
+
     }
     else
          cout << "Sin solucion." << endl;
+
+    salida1.close();
+    salida2.close();
+
 }

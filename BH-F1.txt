@@ -1,6 +1,6 @@
-5
+4
 Diametro = 3
 Forma = Redonda
 NSemillas = 1
-Color = Morado
-ClaseFrutal = Arbol
+Color = Naranja
+

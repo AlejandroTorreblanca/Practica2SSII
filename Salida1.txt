@@ -1,0 +1,17 @@
+IDENTIFICACION DE FRUTAS
+Atributo objetivo: Fruta
+Base de hechos inicial:
+    -Diametro = 3
+    -Forma = Redonda
+    -NSemillas = 1
+    -Color = Naranja
+ 
+El razonamiento seguido al intentar obtener una solucion es el siguiente:
+    Se aplica la regla: R5
+    Se añade el hecho: ClaseFrutal=Arbol
+    Se aplica la regla: R6
+    Se añade el hecho: TipoSemilla=Hueso
+    Se aplica la regla: R11
+    Se añade el hecho: Fruta=Albaricoque
+    Se aplica la regla: R17
+    Se añade el hecho: Fruta=Melocoton

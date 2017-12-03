@@ -6,7 +6,7 @@
 	<algorithm>
 	<string.h>
 
-1512152574 source:c:\users\alexjandro\documents\github\practica2ssii\p.cpp
+1512322563 source:c:\users\alexjandro\documents\github\practica2ssii\p.cpp
 	<stdlib.h>
 	<iostream>
 	<fstream>
@@ -18,5 +18,13 @@
 
 1511808437 source:c:\users\alexjandro\documents\github\practica2ssii\prueba.c
 
-1512143772 source:c:\users\alexjandro\documents\github\practica2ssii\prueba.cpp
+1512324440 source:c:\users\alexjandro\documents\github\practica2ssii\prueba.cpp
+	<stdlib.h>
+	<iostream>
+	<fstream>
+	<queue>
+	<algorithm>
+	<string.h>
+	<string>
+	<sstream>
 
