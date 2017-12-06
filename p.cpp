@@ -299,7 +299,7 @@ void incluirConflictos()
             }
             if(suma==nCondiciones[i])
             {
-              //  cout << "Incluimos el conflicto: "<< i+1<<endl;
+                salida2 << "Incluimos el conflicto: "<< i+1 << " prioridad " <<prioridades[i]<<endl;
                 reglasMarcadas[i]=1;
                 parI par;
                 par.first=prioridades[i];
@@ -308,7 +308,6 @@ void incluirConflictos()
 
             }
         }
-
     }
 }
 
@@ -321,17 +320,20 @@ bool objetivoAlcanzado()
     return false;
 }
 
-int resolver()
+int resolver() //Se eliminan algunos que no deberian¡¡¡¡
 {
     queue<parI> colaAux;
     parI p=colaConflictos.top();
     colaConflictos.pop();
+   // cout <<" "<<endl;
+   // cout << "*sacamos "<< p.second+1<<endl;
     if(!colaConflictos.empty())
     {
         parI aux=colaConflictos.top();
         if(p.first==aux.first)
         {
             colaConflictos.pop();
+           // cout << "**sacamos "<< aux.second+1<<endl;
             if(!colaConflictos.empty())
             {
                 while(p.first==aux.first && !colaConflictos.empty())
@@ -339,24 +341,56 @@ int resolver()
                     if(aux.second<p.second)
                     {
                         colaAux.push(p);
+                   //     cout <<aux.second+1<< " < "<< p.second+1<<endl;
+                   //     cout << "-metemos auxi "<< p.second+1<<endl;
                         p=aux;
                     }
                     else
                     {
                         colaAux.push(aux);
+                  //      cout <<aux.second+1<< " >= "<< p.second+1<<endl;
+                  //      cout << "-----metemos auxi "<< aux.second+1<<endl;
                     }
                     aux=colaConflictos.top();
                     colaConflictos.pop();
+                  //  cout << "***sacamos "<< aux.second+1<<endl;
                 }
-                if(aux.second<p.second)
+                if(aux.first<p.first)
+                {
+                    colaAux.push(aux);
+                  //  cout <<aux.first<< " < "<< p.first<<endl;
+                 //   cout << "*--metemos auxi "<< aux.second+1<<endl;
+                }
+                else if(aux.first>p.first)
                 {
                     colaAux.push(p);
+                   //  cout <<aux.first<< " > "<< p.first<<endl;
+                   // cout << "**--metemos auxi "<< p.second+1<<endl;
                     p=aux;
                 }
+                else if(aux.first==p.first)
+                {
+                     cout <<aux.first<< " = "<< p.first<<endl;
+                    if(aux.second<p.second)
+                    {
+                        colaAux.push(p);
+                        //cout <<aux.second+1<< " < "<< p.second+1<<endl;
+                       // cout << "***-metemos auxi "<< p.second+1<<endl;
+                        p=aux;
+                    }
+                    else
+                    {
+                        colaAux.push(aux);
+                        //cout <<aux.second+1<< " >= "<< p.second+1<<endl;
+                       // cout << "****-metemos auxi "<< aux.second+1<<endl;
+                    }
+                }
+
                 while(!colaAux.empty())
                 {
-                    p=colaAux.front();
-                    colaConflictos.push(p);
+                    aux=colaAux.front();
+                    colaConflictos.push(aux);
+                    //cout << "---metemos desde auxi "<< aux.second+1<<endl;
                     colaAux.pop();
                 }
             }
@@ -365,11 +399,13 @@ int resolver()
                 if(aux.second<p.second)
                 {
                     colaConflictos.push(p);
+                    cout << "----metemos "<< p.second+1<<endl;
                     p=aux;
                 }
             }
         }
     }
+   // cout << "Escogida: "<< p.second+1<<endl;
     return p.second;
 }
 
@@ -380,7 +416,6 @@ bool encadenamientoHaciaDelante()
     incluirConflictos();
     while(!colaConflictos.empty())
     {
-
         int r=resolver();
         salida1<< "    Se aplica la regla: R" << r+1 <<endl;
         parS hecho=listaConsecuencias[r];
@@ -419,11 +454,6 @@ int main(int argc, char **argv)
     leerBC(argv[1]);
     leerfC(argv[2]);
     leerBH(argv[3]);
-
-
-
-
-
 
     memset(reglasMarcadas, 0, sizeof(reglasMarcadas));
 

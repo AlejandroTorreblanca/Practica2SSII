@@ -1,0 +1,8 @@
+DETECCION DE INUNDACIONES
+Incluimos el conflicto: 10
+Incluimos el conflicto: 16
+Incluimos el conflicto: 17
+Incluimos el conflicto: 22
+Incluimos el conflicto: 23
+Objetivo: Inundacion
+Solucion: No

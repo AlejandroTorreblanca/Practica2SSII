@@ -1,3 +1,9 @@
-IDENTIFICACION DE FRUTAS
-Objetivo: Fruta
-Solucion multiple: Albaricoque, Melocoton
+DETECCION DE INUNDACIONES
+Incluimos el conflicto: 10 prioridad 10
+Incluimos el conflicto: 16 prioridad 0
+Incluimos el conflicto: 17 prioridad 10
+Incluimos el conflicto: 22 prioridad 10
+Incluimos el conflicto: 23 prioridad 10
+Incluimos el conflicto: 27 prioridad 10
+Objetivo: Inundacion
+Solucion multiple: No, No

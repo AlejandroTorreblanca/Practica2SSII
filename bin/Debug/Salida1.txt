@@ -7,15 +7,11 @@ Base de hechos inicial:
     -Prediccion = Tormenta
  
 El razonamiento seguido al intentar obtener una solucion es el siguiente:
-    Se aplica la regla: R10
-    Se añade el hecho: Estacion=Humeda
     Se aplica la regla: R17
     Se añade el hecho: Nivel=Bajo
     Se aplica la regla: R22
     Se añade el hecho: Lluvia=Fuerte
+    Se aplica la regla: R22
+    Se añade el hecho: Lluvia=Fuerte
     Se aplica la regla: R23
-    Se añade el hecho: Inundacion=No
-    Se aplica la regla: R16
-    Se añade el hecho: Cambio=Subiendo
-    Se aplica la regla: R27
     Se añade el hecho: Inundacion=No
