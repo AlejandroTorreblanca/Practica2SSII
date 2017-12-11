@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="BC-I.txt Config-I.txt BH-I2.txt" />
+				<Option parameters="BC-I.txt Config-I.txt BH-I4.txt" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

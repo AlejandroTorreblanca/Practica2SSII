@@ -1,6 +1,5 @@
-5
-Mes=Marzo
-Profundidad=7
-Nivel=Alto
-Precipitaciones=Subiendo
-Prediccion=Tormenta
+4
+Mes = Marzo
+Profundidad = 7
+Precipitaciones = Fuertes
+Prediccion = Tormenta
