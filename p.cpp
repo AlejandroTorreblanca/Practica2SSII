@@ -327,7 +327,6 @@ void incluirConflictos()
             }
             if(suma==nCondiciones[i])
             {
-                salida2 << "Incluimos el conflicto: "<< i+1 << " prioridad " <<prioridades[i]<<endl;
                 reglasMarcadas[i]=1;
                 parI par;
                 par.first=prioridades[i];
@@ -444,11 +443,9 @@ bool encadenamientoHaciaDelante()
     incluirConflictos();
     while(!colaConflictos.empty())
     {
-        int r=resolver();
-        salida1<< "    Se aplica la regla: R" << r+1 <<endl;
+        int r=resolver();;
         parS hecho=listaConsecuencias[r];
         baseHechos[nHechos]=hecho;
-        salida1 << "    Se añade el hecho: " << hecho.first<<"="<<hecho.second <<endl;
         nHechos++;
         incluirConflictos();
 
@@ -458,7 +455,6 @@ bool encadenamientoHaciaDelante()
     {
         return true;
     }
-
     return false;
 }
 
@@ -524,15 +520,13 @@ void reconstruirSolucion(string solucion)
             }
         }
     }
-    salida1 << " " << endl;
-    salida1 << " " << endl;
     while(!pilaR.empty())
     {
         int r=pilaR.top();
         pilaR.pop();
-        salida1<< "  ***  Se aplica la regla: R" << r+1 <<endl;
+        salida1<< " -Se aplica la regla: R" << r+1 <<endl;
         parS hecho=listaConsecuencias[r];
-        salida1 << "  ***  Se añade el hecho: " << hecho.first<<"="<<hecho.second <<endl;
+        salida1 << " -Se añade el hecho: " << hecho.first<<"="<<hecho.second <<endl;
     }
 }
 
@@ -550,8 +544,11 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    salida1.open("Salida1.txt",ios::trunc);
-    salida2.open("Salida2.txt",ios::trunc);
+    string aux=argv[3];
+    string str1="Salida1"+aux+".txt";
+    salida1.open(str1.c_str(),ios::trunc);
+    string str2="Salida2"+aux+".txt";
+    salida2.open(str2.c_str(),ios::trunc);
 
     leerBC(argv[1]);
     leerfC(argv[2]);
@@ -569,28 +566,22 @@ int main(int argc, char **argv)
         {
             string aux=" ";
             salida2<< "Solucion multiple: ";
-            cout<< "Solucion multiple: ";
             for(int i=0; i<n-1; i++)
             {
                 salida2 << parametros[i] <<", ";
                 if(aux.compare(parametros[i])!=0)
                     reconstruirSolucion(parametros[i]);
-                cout << parametros[i] <<", ";
                 aux=parametros[i];
             }
             salida2 << parametros[n-1] <<endl;
             if(aux.compare(parametros[n-1])!=0)
                     reconstruirSolucion(parametros[n-1]);
-            cout << parametros[n-1] <<endl;
         }
         else{
             salida2<< "Solucion: " << parametros[0] << endl;
             reconstruirSolucion(parametros[0]);
-            cout<< "Solucion: " << parametros[0] << endl;
         }
     }
-    else
-         cout << "Sin solucion." << endl;
 
     salida1.close();
     salida2.close();

@@ -1,0 +1,15 @@
+IDENTIFICACION DE FRUTAS
+Atributo objetivo: Fruta
+Base de hechos inicial:
+    -Diametro = 8
+    -Forma = Redonda
+    -NSemillas = 10
+    -Color = Verde
+ 
+El razonamiento seguido al intentar obtener una solucion es el siguiente:
+ -Se aplica la regla: R1
+ -Se añade el hecho: TipoSemilla=Multiple
+ -Se aplica la regla: R5
+ -Se añade el hecho: ClaseFrutal=Arbol
+ -Se aplica la regla: R16
+ -Se añade el hecho: Fruta=Manzana
