@@ -1,4 +1,0 @@
-3
-Lluvia = Ligera
-Nivel = Bajo
-Cambio = Subiendo

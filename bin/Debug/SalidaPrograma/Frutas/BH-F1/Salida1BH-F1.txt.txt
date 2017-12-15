@@ -1,0 +1,21 @@
+IDENTIFICACION DE FRUTAS
+Atributo objetivo: Fruta
+Base de hechos inicial:
+    -Diametro = 3
+    -Forma = Redonda
+    -NSemillas = 1
+    -Color = Rojo
+ 
+El razonamiento seguido al intentar obtener una solucion es el siguiente:
+-Se aplica la regla R6:
+    Si NSemillas = 1 entonces TipoSemilla = Hueso
+-Se añade el hecho: 
+    TipoSemilla = Hueso
+-Se aplica la regla R5:
+    Si Forma = Redonda y Diametro < 10 entonces ClaseFrutal = Arbol
+-Se añade el hecho: 
+    ClaseFrutal = Arbol
+-Se aplica la regla R13:
+    Si ClaseFrutal = Arbol y Color = Rojo y TipoSemilla = Hueso entonces Fruta = Cereza
+-Se añade el hecho: 
+    Fruta = Cereza

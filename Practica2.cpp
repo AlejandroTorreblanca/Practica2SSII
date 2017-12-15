@@ -524,9 +524,15 @@ void reconstruirSolucion(string solucion)
     {
         int r=pilaR.top();
         pilaR.pop();
-        salida1<< " -Se aplica la regla: R" << r+1 <<endl;
-        parS hecho=listaConsecuencias[r];
-        salida1 << " -Se añade el hecho: " << hecho.first<<"="<<hecho.second <<endl;
+        salida1<< "-Se aplica la regla R" << r+1 << ":"<<endl;
+        salida1<< "    Si ";
+        for(int i=0; i<nCondiciones[r]-1;i++)
+        {
+            salida1<< listaCondiciones[r][i].a<< " " << listaCondiciones[r][i].op << " "<< listaCondiciones[r][i].b << " y ";
+        }
+        salida1<< listaCondiciones[r][nCondiciones[r]-1].a<< " " << listaCondiciones[r][nCondiciones[r]-1].op << " "<< listaCondiciones[r][nCondiciones[r]-1].b << " entonces ";
+        salida1<< listaConsecuencias[r].first<< " = " << listaConsecuencias[r].second << endl;
+        salida1 << "-Se añade el hecho: \n    " << listaConsecuencias[r].first<< " = " << listaConsecuencias[r].second <<endl;
     }
 }
 

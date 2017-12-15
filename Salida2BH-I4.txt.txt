@@ -1,9 +1,0 @@
-DETECCION DE INUNDACIONES
-Incluimos el conflicto: 4 prioridad 0
-Incluimos el conflicto: 15 prioridad 0
-Incluimos el conflicto: 17 prioridad 10
-Incluimos el conflicto: 22 prioridad 10
-Incluimos el conflicto: 23 prioridad 10
-Incluimos el conflicto: 25 prioridad 10
-Objetivo: Inundacion
-Solucion multiple: No, No

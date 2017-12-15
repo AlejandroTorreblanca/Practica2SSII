@@ -32,8 +32,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="p.cpp" />
-		<Unit filename="prueba.cpp" />
+		<Unit filename="Practica2.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

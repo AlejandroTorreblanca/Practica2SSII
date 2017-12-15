@@ -1,0 +1,25 @@
+DETECCION DE INUNDACIONES
+Atributo objetivo: Inundacion
+Base de hechos inicial:
+    -Mes = Marzo
+    -Profundidad = 2
+    -Precipitaciones = Fuertes
+    -Prediccion = Tormenta
+ 
+El razonamiento seguido al intentar obtener una solucion es el siguiente:
+-Se aplica la regla R16:
+    Si Precipitaciones = Fuertes entonces Cambio = Subiendo
+-Se añade el hecho: 
+    Cambio = Subiendo
+-Se aplica la regla R17:
+    Si Profundidad < 3 entonces Nivel = Bajo
+-Se añade el hecho: 
+    Nivel = Bajo
+-Se aplica la regla R27:
+    Si Cambio = Subiendo y Nivel = Bajo entonces Inundacion = No
+-Se añade el hecho: 
+    Inundacion = No
+-Se aplica la regla R23:
+    Si Nivel = Bajo entonces Inundacion = No
+-Se añade el hecho: 
+    Inundacion = No
