@@ -32,6 +32,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="BaseConocimientos.cpp" />
+		<Unit filename="BaseConocimientos.h" />
+		<Unit filename="BaseHechos.cpp" />
+		<Unit filename="BaseHechos.h" />
 		<Unit filename="Practica2.cpp" />
 		<Extensions>
 			<code_completion />
