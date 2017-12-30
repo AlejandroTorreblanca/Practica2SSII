@@ -29,22 +29,13 @@
 	<string>
 	<sstream>
 
-1514570256 source:c:\users\alexjandro\documents\github\practica2ssii\baseconocimientos.cpp
+1514674405 source:c:\users\alexjandro\documents\github\practica2ssii\baseconocimientos.cpp
 	"BaseConocimientos.h"
 
-1514570154 c:\users\alexjandro\documents\github\practica2ssii\baseconocimientos.h
-	<stdlib.h>
-	<iostream>
-	<fstream>
-	<queue>
-	<algorithm>
-	<string.h>
-	<string>
-	<sstream>
-	<stack>
+1514676611 c:\users\alexjandro\documents\github\practica2ssii\baseconocimientos.h
 	"BaseHechos.h"
 
-1514569908 c:\users\alexjandro\documents\github\practica2ssii\basehechos.h
+1514676633 c:\users\alexjandro\documents\github\practica2ssii\basehechos.h
 	<stdlib.h>
 	<iostream>
 	<fstream>
@@ -55,6 +46,10 @@
 	<sstream>
 	<stack>
 
-1514570268 source:c:\users\alexjandro\documents\github\practica2ssii\basehechos.cpp
+1514674828 source:c:\users\alexjandro\documents\github\practica2ssii\basehechos.cpp
 	"BaseHechos.h"
+
+1514676555 source:c:\users\alexjandro\documents\github\practica2ssii\practica2.cpp
+	"BaseHechos.h"
+	"BaseConocimientos.h"
 

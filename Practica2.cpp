@@ -1,12 +1,3 @@
-#include <stdlib.h>  // Config-F.txt BC-F.txt BH-F1.txt
-#include <iostream>
-#include <fstream>
-#include <queue>
-#include<algorithm>
-#include <string.h>
-#include <string>
-#include <sstream>
-#include <stack>
 #include"BaseHechos.h"
 #include"BaseConocimientos.h"
 
@@ -24,14 +15,12 @@ priority_queue<parI, deque<parI>, less<parI> > colaConflictos;
 ////////////        VARIABLES GLOBALES        ////////////////
 //////////////////////////////////////////////////////////////
 
-string AtributosTipoNU[MAX_ATRIBUTOS];
-int prioridades[MAX_PRIO];
+string AtributosTipoNU[MAX_ATRIBUTOS];  //Array en el que almacenamos el nombre de los atributos de tipo NU.
+int prioridades[MAX_PRIO];              //Array en el que almacenamos la prioridad de cada una de las reglas.
 string objetivo;
 int nAtributos, nAtributosTipoNU;
 ofstream salida1;
 ofstream salida2;
-BaseHechos bh;
-BaseConocimientos bc;
 
 
 //////////////////////////////////////////////////////////////
@@ -131,7 +120,7 @@ Añadimos a la lista de conflictos las reglas que se pueden usar ya que se cumple
 void incluirConflictos()
 {
     parI parametros [20];
-    int n=bc.comprobarReglas(parametros);
+    int n=BaseConocimientos::getInstance()->comprobarReglas(parametros);
     for (int i=0;i<n;i++)
     {
          colaConflictos.push(parametros[i]);
@@ -144,7 +133,7 @@ Retorna true si el objetivo se encuentra en la base de hechos, en otro caso reto
 bool objetivoAlcanzado()
 {
     string parametros[10];
-    int n=bh.buscarBaseHechos(parametros,objetivo);
+    int n=BaseHechos::getInstance()->buscarBaseHechos(parametros,objetivo);
     if(n!=0)
         return true;
     return false;
@@ -248,14 +237,13 @@ Retorna true si se alcanza el objetivo en alguna regla, false en otro caso.
 **/
 bool encadenamientoHaciaDelante()
 {
-    salida1<<" "<<endl;
-    salida1<< "El razonamiento seguido al intentar obtener una solucion es el siguiente:"<<endl;
+
     incluirConflictos();
     while(!colaConflictos.empty())
     {
-        int r=resolver();;
-        parS hecho=listaConsecuencias[r];
-        bh.incluirHecho(hecho);
+        int r=resolver();
+        parS hecho=BaseConocimientos::getInstance()->getConsecuencia(r);
+        BaseHechos::getInstance()->incluirHecho(hecho);
         incluirConflictos();
     }
     if(objetivoAlcanzado())
@@ -281,24 +269,32 @@ int main(int argc, char **argv)
     }
 
     string aux=argv[3];
-    string str1="Salida1"+aux+".txt";
-    salida1.open(str1.c_str(),ios::app);
-    string str2="Salida2"+aux+".txt";
-    salida2.open(str2.c_str(),ios::app);
+    string str1="Salida1"+aux;
+    salida1.open(str1.c_str(),ios::trunc);
+    string str2="Salida2"+aux;
+    salida2.open(str2.c_str(),ios::trunc);
+    salida1 << "*** ***  Salida1 -- " <<aux<<"  *** ***\n"<< endl;
+    salida2 << "*** ***  Salida2 -- " <<aux<<"  *** ***\n"<< endl;
 
     leerfC(argv[2]);
-    bh=BaseHechos::getInstance();
-    bh.inicializar(argv[3]);
-    bc=BaseConocimientos::getInstance();
-    bc.inicializar(AtributosTipoNU, nAtributosTipoNU,argv[3]);
-    bh.leerBH();
+    BaseConocimientos::getInstance()->inicializar(AtributosTipoNU, nAtributosTipoNU,prioridades,argv[1]);
+    BaseHechos::getInstance()->inicializar(argv[3]);
+    string dominio=BaseConocimientos::getInstance()->getDominioAplicacion();;
+    salida1<<dominio<<endl;
+    salida2<<dominio<<endl;
 
-    if (encadenamientoHaciaDelante(bc))
+    salida1 << "Atributo Objetivo: " << objetivo << endl;
+    salida2 << "Atributo Objetivo: " << objetivo << endl;
+    salida1 << "La base de hechos inicial es: " << endl;
+    salida1 << BaseHechos::getInstance()->to_string(0) << endl;
+
+    if (encadenamientoHaciaDelante())
     {   //Si encontramos una solución para el problema.
+
+        salida1 << "\nEl razonamiento seguido para encontrar la solución ha sido el siguiente: " << endl;
         string parametros[10];
-        salida1 << "Objetivo: " << objetivo << endl;
-        salida2 << "Objetivo: " << objetivo << endl;
-        int n=bh.buscarBaseHechos(parametros,objetivo);
+        int n=BaseHechos::getInstance()->buscarBaseHechos(parametros,objetivo);
+
         if (n>1)
         {
             string aux=" ";
@@ -307,17 +303,20 @@ int main(int argc, char **argv)
             {
                 salida2 << parametros[i] <<", ";
                 if(aux.compare(parametros[i])!=0)
-                    reconstruirSolucion(parametros[i]);
+                    salida1<<BaseConocimientos::getInstance()->reconstruirSolucion(parametros[i])<<endl;
                 aux=parametros[i];
             }
             salida2 << parametros[n-1] <<endl;
             if(aux.compare(parametros[n-1])!=0)
-                    reconstruirSolucion(parametros[n-1]);
+                    salida1<<BaseConocimientos::getInstance()->reconstruirSolucion(parametros[n-1])<<endl;
         }
         else{
             salida2<< "Solucion: " << parametros[0] << endl;
-            reconstruirSolucion(parametros[0]);
+            BaseConocimientos::getInstance()->reconstruirSolucion(parametros[0]);
+
         }
+    salida1 << "La base de hechos final ha sido: " << endl;
+    salida1 << BaseHechos::getInstance()->to_string(1) << endl;
     }
     else
     {
@@ -326,7 +325,5 @@ int main(int argc, char **argv)
 
     salida1.close();
     salida2.close();
-    bh.cerrarFicheros();
-    bc.cerrarFicheros();
-
+    cout<<"Fin."<<endl;
 }

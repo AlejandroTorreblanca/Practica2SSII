@@ -1,0 +1,5 @@
+*** ***  Salida2 -- BH-F1.txt  *** ***
+
+IDENTIFICACION DE FRUTAS
+Atributo Objetivo: Fruta
+Solucion: Cereza

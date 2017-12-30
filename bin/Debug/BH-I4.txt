@@ -1,0 +1,5 @@
+4
+Mes = Septiembre
+Profundidad = 2
+Precipitaciones = Ligera
+Prediccion = Tormenta

@@ -1,15 +1,6 @@
 #ifndef BaseConocimientos_h
 #define BaseConocimientos_h
 
-#include <stdlib.h>  // Config-F.txt BC-F.txt BH-F1.txt
-#include <iostream>
-#include <fstream>
-#include <queue>
-#include<algorithm>
-#include <string.h>
-#include <string>
-#include <sstream>
-#include <stack>
 #include"BaseHechos.h"
 
 #define MAX_ATRIBUTOS 20
@@ -27,6 +18,7 @@ struct Terna {
 
 class BaseConocimientos {
 private:
+    BaseConocimientos(void);
     static BaseConocimientos* unica_instancia;
     int nRestric, nAtributosTipoNU;
     int nCondiciones[MAX_PRIO];
@@ -35,13 +27,12 @@ private:
     parS listaConsecuencias[MAX_PRIO];
     int prioridades[MAX_PRIO];
     string AtributosTipoNU[MAX_ATRIBUTOS];
-    ofstream salida1;
-    ofstream salida2;
+    string dominio;
+
 
 public:
-    BaseConocimientos(void);
     static BaseConocimientos *getInstance();
-    void inicializar(string AtributosNU[MAX_ATRIBUTOS], int n, int prioridades[MAX_PRIO], char* nombre);
+    void inicializar(string AtributosNU[MAX_ATRIBUTOS], int n, int prioridades[MAX_PRIO],char* nombreBC);
     int funcionSeparadora(string linea, string parametros[10],char c);
     void leerBC(char* nombre );
     bool comprobarCondicion(Terna t);
@@ -49,12 +40,9 @@ public:
     bool comprobarTipoNum(string str);
     int buscarReglas(int parametros[10], string solucion);
     bool comprobarCondicionIni(string str);
-    void reconstruirSolucion(string solucion);
-    void cerrarFicheros();
-
-
-
-
+    string reconstruirSolucion(string solucion);
+    parS getConsecuencia(int r);
+    string getDominioAplicacion();
 };
 
 

@@ -1,8 +1,10 @@
 #include"BaseConocimientos.h"
 
+BaseConocimientos* BaseConocimientos::unica_instancia = NULL;
+
 BaseConocimientos::BaseConocimientos(void)
 {
-    cout << "BH is being created" << endl;
+    //Constructor por defecto.
 }
 
 /**
@@ -10,27 +12,23 @@ Usamos un patron Singelton para que solo haya una unica instancia de la base de 
 **/
 BaseConocimientos* BaseConocimientos::getInstance()
 {
-    if(unica_instancia == NULL)
+    if(!unica_instancia)
     {
-        unica_instancia = new BaseConocimientos();
+        unica_instancia = new BaseConocimientos;
     }
     return unica_instancia;
 }
 
-void BaseConocimientos::inicializar(string AtributosNU[MAX_ATRIBUTOS], int n, int prioridades[MAX_PRIO], char* nombre)
+void BaseConocimientos::inicializar(string AtributosNU[MAX_ATRIBUTOS], int n, int prioridades[MAX_PRIO],char* nombreBC)
 {
+    this->leerBC(nombreBC);
     for(int i=0;i<n;i++)
         this->AtributosTipoNU[i]= AtributosNU[i];
     this->nAtributosTipoNU=n;
     for(int i=0;i<this->nRestric;i++)
         this->prioridades[i]= prioridades[i];
     this->nAtributosTipoNU=n;
-    string aux=nombre;
-    string str1="Salida1"+aux+".txt";
-    this->salida1.open(str1.c_str(),ios::trunc);
-    string str2="Salida2"+aux+".txt";
-    this->salida2.open(str2.c_str(),ios::trunc);
-    this->leerBC(nombre);
+
 }
 
 /**
@@ -83,8 +81,7 @@ void BaseConocimientos::leerBC(char* nombre )
     ifstream fC(nombre);
     fC.getline(cadena, 128);
     string dominioAplicacion=cadena;
-    this->salida1 << dominioAplicacion << endl;
-    this->salida2 << dominioAplicacion << endl;
+    this->dominio=dominioAplicacion;
     fC.getline(cadena, 128);
     this->nRestric=atoi(cadena);
     for(int i=0; i<this->nRestric;i++)
@@ -211,7 +208,7 @@ int BaseConocimientos::comprobarReglas(parI parametros[10])
                 else
                 {
                     Terna t=this->listaCondiciones[i][suma]; //**********Sobra?
-                   // cout << "     condicion "<< t.a<< t.op <<t.b<< " incorrecta"<<endl;
+                    //cout << "     condicion "<< t.a<< t.op <<t.b<< " incorrecta"<<endl;
                     parada=false;
                 }
             }
@@ -253,27 +250,30 @@ int BaseConocimientos::buscarReglas(int parametros[10], string solucion)
 
 bool BaseConocimientos::comprobarCondicionIni(string str)
 {
-    BaseHechos* bh=BaseHechos::getInstance();
-
-    if(bh->buscarBaseHechosIni(str))
+    if(BaseHechos::getInstance()->buscarBaseHechosIni(str))
+    {
         return true;
+    }
+
     return false;
 }
 
 /**
 Reconstrimos la solucion pasada como parametro y la mostramos en los ficheros de salida.
 **/
-void BaseConocimientos::reconstruirSolucion(string solucion)
+string BaseConocimientos::reconstruirSolucion(string solucion)
 {
     int parametros[10];
     stack<int> pilaR;
     queue<int> colaR;
+
     int m=buscarReglas(parametros, solucion);
     for(int i=0;i<m;i++)
     {
         pilaR.push(parametros[i]);
         colaR.push(parametros[i]);
     }
+
     while(!colaR.empty())
     {
         int restriccion=colaR.front();
@@ -293,26 +293,37 @@ void BaseConocimientos::reconstruirSolucion(string solucion)
             }
         }
     }
+    string str="";
     while(!pilaR.empty())
     {
         int r=pilaR.top();
         pilaR.pop();
-        salida1<< "-Se aplica la regla R" << r+1 << ":"<<endl;
-        salida1<< "    Si ";
+        ostringstream str1;
+        str1 << r+1;
+        string aux = str1.str();
+
+        str=str+ "-Se aplica la regla R" + aux + ":\n";
+        str=str+ "    Si ";
         for(int i=0; i<this->nCondiciones[r]-1;i++)
         {
-            salida1<< this->listaCondiciones[r][i].a<< " " << this->listaCondiciones[r][i].op << " "<< this->listaCondiciones[r][i].b << " y ";
+           str=str+ this->listaCondiciones[r][i].a+ " " + this->listaCondiciones[r][i].op + " " + this->listaCondiciones[r][i].b + " y ";
         }
-        salida1<< this->listaCondiciones[r][nCondiciones[r]-1].a<< " " << this->listaCondiciones[r][nCondiciones[r]-1].op << " "<< this->listaCondiciones[r][nCondiciones[r]-1].b << " entonces ";
-        salida1<< this->listaConsecuencias[r].first<< " = " << this->listaConsecuencias[r].second << endl;
-        salida1 << "-Se añade el hecho: \n    " << this->listaConsecuencias[r].first<< " = " << this->listaConsecuencias[r].second <<endl;
+        str=str+ this->listaCondiciones[r][nCondiciones[r]-1].a + " " + this->listaCondiciones[r][nCondiciones[r]-1].op + " " + this->listaCondiciones[r][nCondiciones[r]-1].b + " entonces ";
+        str=str+ this->listaConsecuencias[r].first + " = " + this->listaConsecuencias[r].second;
+        str=str+ "\n-Como consecuencia se añade el hecho: \n    " + this->listaConsecuencias[r].first + " = " + this->listaConsecuencias[r].second + "\n\n";
+        BaseHechos::getInstance()->incluirHechoIni(this->listaConsecuencias[r]);
     }
+    return str;
 }
 
-void BaseConocimientos::cerrarFicheros()
+parS BaseConocimientos::getConsecuencia(int r)
 {
-    this->salida1.close();
-    this->salida2.close();
+    return this->listaConsecuencias[r];
+}
+
+string BaseConocimientos::getDominioAplicacion()
+{
+    return this->dominio;
 }
 
 

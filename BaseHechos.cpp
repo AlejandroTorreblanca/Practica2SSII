@@ -1,8 +1,10 @@
 #include"BaseHechos.h"
 
+BaseHechos* BaseHechos::unica_instancia = NULL;
+
 BaseHechos::BaseHechos(void)
 {
-    cout << "BH is being created" << endl;
+    //Constructor por defecto.
 }
 
 
@@ -11,19 +13,19 @@ Usamos un patron Singelton para que solo haya una unica instancia de la base de 
 **/
 BaseHechos* BaseHechos::getInstance()
 {
-    if(unica_instancia == NULL)
+    if(!unica_instancia)
     {
-        unica_instancia = new BaseHechos();
+        unica_instancia = new BaseHechos;
     }
     return unica_instancia;
 }
 
 void BaseHechos::inicializar(char* nombre)
 {
-    string aux=nombre;
     this->nombreFichero=nombre;
-    string str1="Salida1"+aux+".txt";
-    salida1.open(str1.c_str(),ios::app);
+    string aux=this->nombreFichero;
+    string str1="Salida1"+aux;
+
     leerBH();
 }
 
@@ -73,14 +75,14 @@ void BaseHechos::leerBH()
 
     ifstream fBH(this->nombreFichero);
     fBH.getline(cadena, 128);
-    this->nHechosIni=nHechos;
     this->nHechos=atoi(cadena);
-    this->salida1 <<"Base de hechos inicial:"<< endl;
-    for(int i=0; i<this->nHechos;i++)
+    this->nHechosIni=nHechos;
+    //salida1 <<"Base de hechos inicial:"<< endl;
+    for(int i=0; i<nHechos;i++)
     {
         fBH.getline(cadena, 128);
         str=cadena;
-        this->salida1 <<"    -"<<str<< endl;
+        //salida1 <<"    -"<<str<< endl;
         funcionSeparadora(str,parametros,' ');
         parS aux;
         aux.first=parametros[0];
@@ -97,9 +99,21 @@ Añade un hecho a la base de hechos actual.
 **/
  void BaseHechos::incluirHecho(parS par)
  {
-    this->baseHechos[this->nHechos]=par;
+    parS p;
+    p.first=par.first;
+    p.second=par.second;
+    this->baseHechos[this->nHechos]=p;
     this->nHechos++;
  }
+
+  void BaseHechos::incluirHechoIni(parS par)
+  {
+    parS p;
+    p.first=par.first;
+    p.second=par.second;
+    this->baseHechosIni[this->nHechosIni]=p;
+    this->nHechosIni++;
+  }
 
  /**
 Retorna 0 si no se encuentra el string introducido en la base de hechos,
@@ -128,23 +142,31 @@ Retorna true si el string introducido se encuentra en la base de hechos inicial,
 **/
 bool BaseHechos::buscarBaseHechosIni(string busqueda)
 {
-    //cout << "Buscamos en la base la palabra: "<< busqueda<<endl;
     for (int i=0; i<this->nHechosIni; i++)
     {
         parS p=this->baseHechosIni[i];
-        //cout << "comparamos: "<< busqueda<<" y "<<p.first<<endl;
         if(busqueda==p.second)
-        {
             return true;
-        }
     }
-     //cout << "Numero de veces encontrada: "<< suma<<endl;
     return false;
 }
 
-void BaseHechos::cerrarFicheros()
+string BaseHechos::to_string(int n)
 {
-    this->salida1.close();
+    string s="";
+    if(n==0)
+    {
+        for(int i=0; i<this->nHechos; i++)
+            s=s+"    -"+this->baseHechos[i].first+ " = " + this->baseHechos[i].second +"\n";
+    }
+    else
+    {
+       for(int i=0; i<this->nHechosIni; i++)
+            s=s+"    -"+this->baseHechosIni[i].first+ " = " + this->baseHechosIni[i].second +"\n";
+    }
+    return s;
 }
+
+
 
 
